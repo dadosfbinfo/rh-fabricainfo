@@ -3,6 +3,7 @@ import { Users, CalendarX, GraduationCap, Gauge, FileHeart, Database } from "luc
 import { PageHeader } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFuncionarios } from "@/lib/queries";
+import { ImportLogs } from "@/components/ImportLogs";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -75,6 +76,10 @@ function Dashboard() {
             </Link>
           );
         })}
+      </div>
+
+      <div className="mt-10">
+        <ImportLogs />
       </div>
     </>
   );
