@@ -68,10 +68,11 @@ export function ImportDialog({ config, disabled }: { config: ImportConfig; disab
     if (missing.length > 0 || ok.length === 0) return;
     setSaving(true);
     const payload = ok.map((r) => r.result.row!);
-    const { error } = await supabase.from(config.table).insert(payload as never);
+    const { error } = await supabase.from(config.table as never).insert(payload as never);
     if (error) {
       setSaving(false);
-      return toast.error(error.message);
+      toast.error(error.message);
+      return;
     }
     await supabase.from("import_logs").insert({
       tabela: config.table,

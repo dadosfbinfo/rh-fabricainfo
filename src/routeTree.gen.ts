@@ -13,12 +13,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAbsenteismoRouteImport } from './routes/_authenticated/absenteismo'
+import { Route as AuthenticatedApiRouteImport } from './routes/_authenticated/api'
 import { Route as AuthenticatedAtestadosRouteImport } from './routes/_authenticated/atestados'
 import { Route as AuthenticatedAvaliacoesRouteImport } from './routes/_authenticated/avaliacoes'
 import { Route as AuthenticatedCadastrosRouteImport } from './routes/_authenticated/cadastros'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedFuncionariosRouteImport } from './routes/_authenticated/funcionarios'
 import { Route as AuthenticatedInfoSchoolRouteImport } from './routes/_authenticated/info-school'
+import { Route as ApiPublicRhTabelaRouteImport } from './routes/api/public/rh.$tabela'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +42,11 @@ const AuthenticatedAbsenteismoRoute =
     path: '/absenteismo',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedApiRoute = AuthenticatedApiRouteImport.update({
+  id: '/api',
+  path: '/api',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAtestadosRoute = AuthenticatedAtestadosRouteImport.update({
   id: '/atestados',
   path: '/atestados',
@@ -71,28 +78,37 @@ const AuthenticatedInfoSchoolRoute = AuthenticatedInfoSchoolRouteImport.update({
   path: '/info-school',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicRhTabelaRoute = ApiPublicRhTabelaRouteImport.update({
+  id: '/api/public/rh/$tabela',
+  path: '/api/public/rh/$tabela',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/absenteismo': typeof AuthenticatedAbsenteismoRoute
+  '/api': typeof AuthenticatedApiRoute
   '/atestados': typeof AuthenticatedAtestadosRoute
   '/avaliacoes': typeof AuthenticatedAvaliacoesRoute
   '/cadastros': typeof AuthenticatedCadastrosRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/funcionarios': typeof AuthenticatedFuncionariosRoute
   '/info-school': typeof AuthenticatedInfoSchoolRoute
+  '/api/public/rh/$tabela': typeof ApiPublicRhTabelaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/absenteismo': typeof AuthenticatedAbsenteismoRoute
+  '/api': typeof AuthenticatedApiRoute
   '/atestados': typeof AuthenticatedAtestadosRoute
   '/avaliacoes': typeof AuthenticatedAvaliacoesRoute
   '/cadastros': typeof AuthenticatedCadastrosRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/funcionarios': typeof AuthenticatedFuncionariosRoute
   '/info-school': typeof AuthenticatedInfoSchoolRoute
+  '/api/public/rh/$tabela': typeof ApiPublicRhTabelaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -100,12 +116,14 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/absenteismo': typeof AuthenticatedAbsenteismoRoute
+  '/_authenticated/api': typeof AuthenticatedApiRoute
   '/_authenticated/atestados': typeof AuthenticatedAtestadosRoute
   '/_authenticated/avaliacoes': typeof AuthenticatedAvaliacoesRoute
   '/_authenticated/cadastros': typeof AuthenticatedCadastrosRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/funcionarios': typeof AuthenticatedFuncionariosRoute
   '/_authenticated/info-school': typeof AuthenticatedInfoSchoolRoute
+  '/api/public/rh/$tabela': typeof ApiPublicRhTabelaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -113,41 +131,48 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/absenteismo'
+    | '/api'
     | '/atestados'
     | '/avaliacoes'
     | '/cadastros'
     | '/dashboard'
     | '/funcionarios'
     | '/info-school'
+    | '/api/public/rh/$tabela'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/absenteismo'
+    | '/api'
     | '/atestados'
     | '/avaliacoes'
     | '/cadastros'
     | '/dashboard'
     | '/funcionarios'
     | '/info-school'
+    | '/api/public/rh/$tabela'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/absenteismo'
+    | '/_authenticated/api'
     | '/_authenticated/atestados'
     | '/_authenticated/avaliacoes'
     | '/_authenticated/cadastros'
     | '/_authenticated/dashboard'
     | '/_authenticated/funcionarios'
     | '/_authenticated/info-school'
+    | '/api/public/rh/$tabela'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicRhTabelaRoute: typeof ApiPublicRhTabelaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -178,6 +203,13 @@ declare module '@tanstack/react-router' {
       path: '/absenteismo'
       fullPath: '/absenteismo'
       preLoaderRoute: typeof AuthenticatedAbsenteismoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/api': {
+      id: '/_authenticated/api'
+      path: '/api'
+      fullPath: '/api'
+      preLoaderRoute: typeof AuthenticatedApiRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/atestados': {
@@ -222,11 +254,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInfoSchoolRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/rh/$tabela': {
+      id: '/api/public/rh/$tabela'
+      path: '/api/public/rh/$tabela'
+      fullPath: '/api/public/rh/$tabela'
+      preLoaderRoute: typeof ApiPublicRhTabelaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAbsenteismoRoute: typeof AuthenticatedAbsenteismoRoute
+  AuthenticatedApiRoute: typeof AuthenticatedApiRoute
   AuthenticatedAtestadosRoute: typeof AuthenticatedAtestadosRoute
   AuthenticatedAvaliacoesRoute: typeof AuthenticatedAvaliacoesRoute
   AuthenticatedCadastrosRoute: typeof AuthenticatedCadastrosRoute
@@ -237,6 +277,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAbsenteismoRoute: AuthenticatedAbsenteismoRoute,
+  AuthenticatedApiRoute: AuthenticatedApiRoute,
   AuthenticatedAtestadosRoute: AuthenticatedAtestadosRoute,
   AuthenticatedAvaliacoesRoute: AuthenticatedAvaliacoesRoute,
   AuthenticatedCadastrosRoute: AuthenticatedCadastrosRoute,
@@ -252,6 +293,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicRhTabelaRoute: ApiPublicRhTabelaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

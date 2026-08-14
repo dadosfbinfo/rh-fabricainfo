@@ -151,8 +151,8 @@ function FuncionariosPage() {
       cargo_id: form.cargo_id || null,
       projeto_id: form.projeto_id || null,
       gestor_id: form.gestor_id || null,
-      tipo_colaborador: form.tipo_colaborador || null,
-      status: form.status,
+      tipo_colaborador: (form.tipo_colaborador || null) as (typeof TIPOS_COLABORADOR)[number] | null,
+      status: form.status as (typeof STATUS_FUNCIONARIO)[number],
       data_desligamento: form.status === "DESLIGADO" ? form.data_desligamento || null : null,
       updated_at: new Date().toISOString(),
     };
