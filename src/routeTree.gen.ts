@@ -12,9 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAvaliacoesRouteImport } from './routes/_authenticated/avaliacoes'
 import { Route as AuthenticatedCadastrosRouteImport } from './routes/_authenticated/cadastros'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedFuncionariosRouteImport } from './routes/_authenticated/funcionarios'
+import { Route as AuthenticatedInfoSchoolRouteImport } from './routes/_authenticated/info-school'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,6 +31,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAvaliacoesRoute = AuthenticatedAvaliacoesRouteImport.update({
+  id: '/avaliacoes',
+  path: '/avaliacoes',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCadastrosRoute = AuthenticatedCadastrosRouteImport.update({
   id: '/cadastros',
@@ -46,43 +53,70 @@ const AuthenticatedFuncionariosRoute =
     path: '/funcionarios',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedInfoSchoolRoute = AuthenticatedInfoSchoolRouteImport.update({
+  id: '/info-school',
+  path: '/info-school',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/avaliacoes': typeof AuthenticatedAvaliacoesRoute
   '/cadastros': typeof AuthenticatedCadastrosRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/funcionarios': typeof AuthenticatedFuncionariosRoute
+  '/info-school': typeof AuthenticatedInfoSchoolRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/avaliacoes': typeof AuthenticatedAvaliacoesRoute
   '/cadastros': typeof AuthenticatedCadastrosRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/funcionarios': typeof AuthenticatedFuncionariosRoute
+  '/info-school': typeof AuthenticatedInfoSchoolRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/avaliacoes': typeof AuthenticatedAvaliacoesRoute
   '/_authenticated/cadastros': typeof AuthenticatedCadastrosRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/funcionarios': typeof AuthenticatedFuncionariosRoute
+  '/_authenticated/info-school': typeof AuthenticatedInfoSchoolRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/cadastros' | '/dashboard' | '/funcionarios'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/avaliacoes'
+    | '/cadastros'
+    | '/dashboard'
+    | '/funcionarios'
+    | '/info-school'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/cadastros' | '/dashboard' | '/funcionarios'
+  to:
+    | '/'
+    | '/auth'
+    | '/avaliacoes'
+    | '/cadastros'
+    | '/dashboard'
+    | '/funcionarios'
+    | '/info-school'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/avaliacoes'
     | '/_authenticated/cadastros'
     | '/_authenticated/dashboard'
     | '/_authenticated/funcionarios'
+    | '/_authenticated/info-school'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -114,6 +148,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/avaliacoes': {
+      id: '/_authenticated/avaliacoes'
+      path: '/avaliacoes'
+      fullPath: '/avaliacoes'
+      preLoaderRoute: typeof AuthenticatedAvaliacoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/cadastros': {
       id: '/_authenticated/cadastros'
       path: '/cadastros'
@@ -135,19 +176,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFuncionariosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/info-school': {
+      id: '/_authenticated/info-school'
+      path: '/info-school'
+      fullPath: '/info-school'
+      preLoaderRoute: typeof AuthenticatedInfoSchoolRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAvaliacoesRoute: typeof AuthenticatedAvaliacoesRoute
   AuthenticatedCadastrosRoute: typeof AuthenticatedCadastrosRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFuncionariosRoute: typeof AuthenticatedFuncionariosRoute
+  AuthenticatedInfoSchoolRoute: typeof AuthenticatedInfoSchoolRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAvaliacoesRoute: AuthenticatedAvaliacoesRoute,
   AuthenticatedCadastrosRoute: AuthenticatedCadastrosRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFuncionariosRoute: AuthenticatedFuncionariosRoute,
+  AuthenticatedInfoSchoolRoute: AuthenticatedInfoSchoolRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
