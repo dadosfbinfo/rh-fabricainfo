@@ -67,6 +67,33 @@ export type Database = {
           },
         ]
       }
+      api_keys: {
+        Row: {
+          chave: string
+          created_at: string
+          created_by: string | null
+          descricao: string | null
+          id: string
+          revogada: boolean
+        }
+        Insert: {
+          chave: string
+          created_at?: string
+          created_by?: string | null
+          descricao?: string | null
+          id?: string
+          revogada?: boolean
+        }
+        Update: {
+          chave?: string
+          created_at?: string
+          created_by?: string | null
+          descricao?: string | null
+          id?: string
+          revogada?: boolean
+        }
+        Relationships: []
+      }
       atestado: {
         Row: {
           cid: string | null

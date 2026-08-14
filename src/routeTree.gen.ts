@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAbsenteismoRouteImport } from './routes/_authenticated/absenteismo'
+import { Route as AuthenticatedAtestadosRouteImport } from './routes/_authenticated/atestados'
 import { Route as AuthenticatedAvaliacoesRouteImport } from './routes/_authenticated/avaliacoes'
 import { Route as AuthenticatedCadastrosRouteImport } from './routes/_authenticated/cadastros'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -31,6 +33,17 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAbsenteismoRoute =
+  AuthenticatedAbsenteismoRouteImport.update({
+    id: '/absenteismo',
+    path: '/absenteismo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAtestadosRoute = AuthenticatedAtestadosRouteImport.update({
+  id: '/atestados',
+  path: '/atestados',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAvaliacoesRoute = AuthenticatedAvaliacoesRouteImport.update({
   id: '/avaliacoes',
@@ -62,6 +75,8 @@ const AuthenticatedInfoSchoolRoute = AuthenticatedInfoSchoolRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/absenteismo': typeof AuthenticatedAbsenteismoRoute
+  '/atestados': typeof AuthenticatedAtestadosRoute
   '/avaliacoes': typeof AuthenticatedAvaliacoesRoute
   '/cadastros': typeof AuthenticatedCadastrosRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -71,6 +86,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/absenteismo': typeof AuthenticatedAbsenteismoRoute
+  '/atestados': typeof AuthenticatedAtestadosRoute
   '/avaliacoes': typeof AuthenticatedAvaliacoesRoute
   '/cadastros': typeof AuthenticatedCadastrosRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -82,6 +99,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/absenteismo': typeof AuthenticatedAbsenteismoRoute
+  '/_authenticated/atestados': typeof AuthenticatedAtestadosRoute
   '/_authenticated/avaliacoes': typeof AuthenticatedAvaliacoesRoute
   '/_authenticated/cadastros': typeof AuthenticatedCadastrosRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -93,6 +112,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/absenteismo'
+    | '/atestados'
     | '/avaliacoes'
     | '/cadastros'
     | '/dashboard'
@@ -102,6 +123,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/absenteismo'
+    | '/atestados'
     | '/avaliacoes'
     | '/cadastros'
     | '/dashboard'
@@ -112,6 +135,8 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/absenteismo'
+    | '/_authenticated/atestados'
     | '/_authenticated/avaliacoes'
     | '/_authenticated/cadastros'
     | '/_authenticated/dashboard'
@@ -147,6 +172,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/absenteismo': {
+      id: '/_authenticated/absenteismo'
+      path: '/absenteismo'
+      fullPath: '/absenteismo'
+      preLoaderRoute: typeof AuthenticatedAbsenteismoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/atestados': {
+      id: '/_authenticated/atestados'
+      path: '/atestados'
+      fullPath: '/atestados'
+      preLoaderRoute: typeof AuthenticatedAtestadosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/avaliacoes': {
       id: '/_authenticated/avaliacoes'
@@ -187,6 +226,8 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAbsenteismoRoute: typeof AuthenticatedAbsenteismoRoute
+  AuthenticatedAtestadosRoute: typeof AuthenticatedAtestadosRoute
   AuthenticatedAvaliacoesRoute: typeof AuthenticatedAvaliacoesRoute
   AuthenticatedCadastrosRoute: typeof AuthenticatedCadastrosRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
@@ -195,6 +236,8 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAbsenteismoRoute: AuthenticatedAbsenteismoRoute,
+  AuthenticatedAtestadosRoute: AuthenticatedAtestadosRoute,
   AuthenticatedAvaliacoesRoute: AuthenticatedAvaliacoesRoute,
   AuthenticatedCadastrosRoute: AuthenticatedCadastrosRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
