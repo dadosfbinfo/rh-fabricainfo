@@ -8,6 +8,7 @@ type AuthState = {
   user: User | null;
   session: Session | null;
   role: AppRole | null;
+  roleLoaded: boolean;
   loading: boolean;
   isAdmin: boolean;
   canEdit: boolean;
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthState>({
   user: null,
   session: null,
   role: null,
+  roleLoaded: false,
   loading: true,
   isAdmin: false,
   canEdit: false,
@@ -27,6 +29,7 @@ const AuthContext = createContext<AuthState>({
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
+  const [roleLoaded, setRoleLoaded] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -44,6 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const uid = session?.user.id;
     if (!uid) {
       setRole(null);
+      setRoleLoaded(false);
       return;
     }
     let active = true;
@@ -59,8 +63,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             ? "ADMINISTRADOR"
             : roles.includes("EDITOR")
               ? "EDITOR"
-              : "VISUALIZADOR",
+              : roles.includes("VISUALIZADOR")
+                ? "VISUALIZADOR"
+                : null,
         );
+        setRoleLoaded(true);
       });
     return () => {
       active = false;
@@ -71,6 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user: session?.user ?? null,
     session,
     role,
+    roleLoaded,
     loading,
     isAdmin: role === "ADMINISTRADOR",
     canEdit: role === "ADMINISTRADOR" || role === "EDITOR",
