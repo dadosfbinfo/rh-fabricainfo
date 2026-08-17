@@ -165,12 +165,16 @@ function Cadastros() {
               {LABELS[t]}
             </TabsTrigger>
           ))}
+          <TabsTrigger value="usuarios">Usuários</TabsTrigger>
         </TabsList>
         {AUX_TABLES.map((t) => (
           <TabsContent key={t} value={t}>
             <AuxCrud table={t} />
           </TabsContent>
         ))}
+        <TabsContent value="usuarios">
+          <UsuariosRoles />
+        </TabsContent>
       </Tabs>
     </>
   );
