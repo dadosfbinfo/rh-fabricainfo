@@ -67,6 +67,35 @@ export type Database = {
           },
         ]
       }
+      api_access_logs: {
+        Row: {
+          acessado_em: string
+          api_key_id: string | null
+          id: string
+          tabela: string
+        }
+        Insert: {
+          acessado_em?: string
+          api_key_id?: string | null
+          id?: string
+          tabela: string
+        }
+        Update: {
+          acessado_em?: string
+          api_key_id?: string | null
+          id?: string
+          tabela?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_access_logs_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       api_keys: {
         Row: {
           chave: string
@@ -439,6 +468,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_dev: { Args: { _user_id: string }; Returns: boolean }
       tem_acesso: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
