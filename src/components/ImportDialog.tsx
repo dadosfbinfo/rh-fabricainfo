@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { normalize } from "@/lib/rh";
+import { normalize, normalizeText } from "@/lib/rh";
 import { useQueryClient } from "@tanstack/react-query";
 
 export type ImportRowResult = { row: Record<string, unknown> | null; errors: string[] };
@@ -54,7 +54,7 @@ export function ImportDialog({ config, disabled }: { config: ImportConfig; disab
       json.map((raw, i) => {
         const clean: Record<string, unknown> = {};
         for (const [k, v] of Object.entries(raw)) {
-          clean[normalize(k).toUpperCase()] = typeof v === "string" ? normalize(v) : v;
+          clean[normalize(k).toUpperCase()] = typeof v === "string" ? normalizeText(v) : v;
         }
         return { line: i + 2, original: clean, result: config.mapRow(clean) };
       }),

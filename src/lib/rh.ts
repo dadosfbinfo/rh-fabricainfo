@@ -1,3 +1,5 @@
+import * as XLSX from "xlsx";
+
 export const TIPOS_COLABORADOR = ["OPERACAO", "ADM", "CLIENTE", "CLIENTE VIP"] as const;
 export const STATUS_FUNCIONARIO = ["ATIVO", "DESLIGADO", "FERIAS", "LICENCA"] as const;
 export const STATUS_INFOSCHOOL = ["FEZ", "NÃO FEZ", "EM ANDAMENTO"] as const;
@@ -74,6 +76,24 @@ export function percent(value?: number | null): string {
   return `${(Number(value) * 100).toFixed(1)}%`;
 }
 
+/**
+ * Padronização global de texto livre: MAIÚSCULAS, sem espaços duplos, sem espaços nas pontas.
+ * Usar em formulários, importação e exportação.
+ */
+export function normalizeText(value: unknown): string {
+  return String(value ?? "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toUpperCase();
+}
+
+/** Aplica normalizeText em todos os valores string de um objeto (usado na exportação). */
+export function normalizeRow<T extends Record<string, unknown>>(row: T): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(row)) out[k] = typeof v === "string" ? normalizeText(v) : v;
+  return out;
+}
+
 export function normalize(value: unknown): string {
   return String(value ?? "")
     .replace(/\s+/g, " ")
@@ -117,8 +137,17 @@ export function parseNumber(value: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+export function downloadXLSX(filename: string, rows: Record<string, unknown>[], sheet = "Dados") {
+  if (rows.length === 0) return;
+  const data = rows.map((r) => normalizeRow(r));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), sheet);
+  XLSX.writeFile(wb, filename);
+}
+
 export function downloadCSV(filename: string, rows: Record<string, unknown>[]) {
   if (rows.length === 0) return;
+  rows = rows.map((r) => normalizeRow(r));
   const headers = Object.keys(rows[0]!);
   const escape = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const csv = [
