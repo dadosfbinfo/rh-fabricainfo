@@ -439,6 +439,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      tem_acesso: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "ADMINISTRADOR" | "EDITOR" | "VISUALIZADOR"

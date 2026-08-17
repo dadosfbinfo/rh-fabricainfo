@@ -29,9 +29,26 @@ const NAV = [
 ] as const;
 
 export function AppLayout({ children }: { children: ReactNode }) {
-  const { user, role, isAdmin, signOut } = useAuth();
+  const { user, role, roleLoaded, isAdmin, signOut } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
+
+  if (roleLoaded && !role) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-secondary px-4">
+        <div className="max-w-md rounded-lg border bg-card p-8 text-center">
+          <h1 className="text-xl font-semibold">Acesso pendente</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Sua conta ainda não possui uma função atribuída. Peça a um administrador para liberar
+            seu acesso em Cadastros auxiliares &gt; Usuários.
+          </p>
+          <Button className="mt-6" variant="outline" onClick={() => void signOut()}>
+            Sair
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-background">
