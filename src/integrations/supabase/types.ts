@@ -442,7 +442,11 @@ export type Database = {
       tem_acesso: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      app_role: "ADMINISTRADOR" | "EDITOR" | "VISUALIZADOR"
+      app_role:
+        | "ADMINISTRADOR"
+        | "EDITOR"
+        | "VISUALIZADOR"
+        | "ADMINISTRADOR_DEV"
       status_funcionario: "ATIVO" | "DESLIGADO" | "FERIAS" | "LICENCA"
       tipo_colaborador: "OPERACAO" | "ADM" | "CLIENTE" | "CLIENTE VIP"
     }
@@ -572,7 +576,12 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["ADMINISTRADOR", "EDITOR", "VISUALIZADOR"],
+      app_role: [
+        "ADMINISTRADOR",
+        "EDITOR",
+        "VISUALIZADOR",
+        "ADMINISTRADOR_DEV",
+      ],
       status_funcionario: ["ATIVO", "DESLIGADO", "FERIAS", "LICENCA"],
       tipo_colaborador: ["OPERACAO", "ADM", "CLIENTE", "CLIENTE VIP"],
     },
