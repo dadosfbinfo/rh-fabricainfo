@@ -48,14 +48,14 @@ function gerarChave() {
 }
 
 function ApiPage() {
-  const { isAdmin, user } = useAuth();
+  const { isDev, user } = useAuth();
   const qc = useQueryClient();
   const [gerando, setGerando] = useState(false);
   const base = typeof window !== "undefined" ? window.location.origin : "";
 
   const { data: chaves = [] } = useQuery({
     queryKey: ["api_keys"],
-    enabled: isAdmin,
+    enabled: isDev,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("api_keys")
@@ -66,13 +66,32 @@ function ApiPage() {
     },
   });
 
-  if (!isAdmin) {
+  const { data: acessos = [] } = useQuery({
+    queryKey: ["api_access_logs"],
+    enabled: isDev,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("api_access_logs")
+        .select("tabela, acessado_em")
+        .order("acessado_em", { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const ultimoAcesso = (tabela: string) => {
+    const log = acessos.find((a) => a.tabela === tabela);
+    return log ? new Date(log.acessado_em).toLocaleString("pt-BR") : "nunca consultado";
+  };
+
+  if (!isDev) {
     return (
       <div className="mx-auto max-w-md rounded-lg border bg-card p-8 text-center">
         <ShieldAlert className="mx-auto size-10 text-destructive" />
         <h1 className="mt-4 text-xl font-semibold">Acesso negado</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Esta área é restrita a usuários com a função ADMINISTRADOR.
+          Esta área é restrita a usuários com a função ADMINISTRADOR DEV.
         </p>
       </div>
     );
@@ -143,7 +162,9 @@ function ApiPage() {
       <div className="space-y-4">
         {ENDPOINTS.map((e) => {
           const url = `${base}/api/public/rh/${e.key}`;
-          const curl = `curl -H "x-api-key: ${chaveAtiva?.chave ?? "SUA_CHAVE"}" "${url}"`;
+          const chave = chaveAtiva?.chave ?? "SUA_CHAVE";
+          const curl = `curl -H "x-api-key: ${chave}" "${url}"`;
+          const powerBI = `let\n    Source = Json.Document(Web.Contents("${url}", [Headers=[apikey="${chave}", Authorization="Bearer ${chave}"]]))\nin\n    Source`;
           return (
             <Card key={e.key}>
               <CardHeader className="pb-2">
@@ -162,6 +183,15 @@ function ApiPage() {
                     <Copy className="size-4" /> Copiar curl
                   </Button>
                 </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <code className="rounded bg-muted px-3 py-2 text-xs break-all">{powerBI}</code>
+                  <Button variant="outline" size="sm" onClick={() => copiar(powerBI)}>
+                    <Copy className="size-4" /> Copiar Power Query
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Última consulta: {ultimoAcesso(e.key)}
+                </p>
               </CardContent>
             </Card>
           );

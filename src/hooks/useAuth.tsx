@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-export type AppRole = "ADMINISTRADOR" | "EDITOR" | "VISUALIZADOR";
+export type AppRole = "ADMINISTRADOR_DEV" | "ADMINISTRADOR" | "EDITOR" | "VISUALIZADOR";
 
 type AuthState = {
   user: User | null;
@@ -10,6 +10,7 @@ type AuthState = {
   role: AppRole | null;
   roleLoaded: boolean;
   loading: boolean;
+  isDev: boolean;
   isAdmin: boolean;
   canEdit: boolean;
   signOut: () => Promise<void>;
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthState>({
   role: null,
   roleLoaded: false,
   loading: true,
+  isDev: false,
   isAdmin: false,
   canEdit: false,
   signOut: async () => {},
@@ -59,7 +61,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!active) return;
         const roles = (data ?? []).map((r) => r.role as AppRole);
         setRole(
-          roles.includes("ADMINISTRADOR")
+          roles.includes("ADMINISTRADOR_DEV")
+            ? "ADMINISTRADOR_DEV"
+            : roles.includes("ADMINISTRADOR")
             ? "ADMINISTRADOR"
             : roles.includes("EDITOR")
               ? "EDITOR"
@@ -80,8 +84,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     role,
     roleLoaded,
     loading,
-    isAdmin: role === "ADMINISTRADOR",
-    canEdit: role === "ADMINISTRADOR" || role === "EDITOR",
+    isDev: role === "ADMINISTRADOR_DEV",
+    isAdmin: role === "ADMINISTRADOR" || role === "ADMINISTRADOR_DEV",
+    canEdit: role === "ADMINISTRADOR" || role === "ADMINISTRADOR_DEV" || role === "EDITOR",
     signOut: async () => {
       await supabase.auth.signOut();
     },

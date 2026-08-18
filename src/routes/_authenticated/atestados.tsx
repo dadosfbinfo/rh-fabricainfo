@@ -9,7 +9,7 @@ import { ImportDialog, type ImportConfig } from "@/components/ImportDialog";
 import { FuncionarioReadOnlyFields, FuncionarioSelect } from "@/components/FuncionarioInfo";
 import { useAuth } from "@/hooks/useAuth";
 import { nomeById, useAux, useFuncionarios } from "@/lib/queries";
-import { diaDaSemana, formatDateBR, normalize, parseExcelDate, parseNumber } from "@/lib/rh";
+import { diaDaSemana, formatDateBR, normalize, normalizeText, parseExcelDate, parseNumber } from "@/lib/rh";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -89,7 +89,7 @@ function AtestadosPage() {
     }
     const { error } = await supabase.from("atestado").insert({
       funcionario_id: funcionarioId,
-      cid: cid.trim() || null,
+      cid: normalizeText(cid) || null,
       data,
       total_dias: dias === "" ? null : Number(dias),
     });
@@ -136,7 +136,7 @@ function AtestadosPage() {
               ? null
               : {
                   funcionario_id: func!.id,
-                  cid: normalize(raw["CID"]) || null,
+                  cid: normalizeText(raw["CID"]) || null,
                   data: dataValor,
                   total_dias: total,
                 },

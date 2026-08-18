@@ -13,10 +13,20 @@ import {
   formatMesBR,
   hhmmssToSeconds,
   normalize,
+  normalizeText,
   parseExcelDate,
   percent,
   secondsToHHMMSS,
 } from "@/lib/rh";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -81,6 +91,12 @@ function AbsenteismoPage() {
   const { data: funcionarios = [] } = useFuncionarios();
   const projetos = useAux("projetos");
 
+  const [fMes, setFMes] = useState("");
+  const [fSetor, setFSetor] = useState("");
+  const [fFuncionario, setFFuncionario] = useState("");
+  const [fPctMin, setFPctMin] = useState("");
+  const [fPctMax, setFPctMax] = useState("");
+
   const [open, setOpen] = useState(false);
   const [mes, setMes] = useState("");
   const [funcionarioId, setFuncionarioId] = useState("");
@@ -118,7 +134,7 @@ function AbsenteismoPage() {
     const { error } = await supabase.from("absenteismo").insert({
       mes: `${mes}-01`,
       funcionario_id: funcionarioId,
-      setor: setor || null,
+      setor: normalizeText(setor) || null,
       horas_ausencia_txt: ausencia,
       horas_previstas_txt: previstas,
       horas_ausencia_seg: segAus,
@@ -146,6 +162,37 @@ function AbsenteismoPage() {
     }
     void qc.invalidateQueries({ queryKey: ["absenteismo"] });
   }
+
+  const filtrados = useMemo(() => {
+    const min = fPctMin === "" ? null : Number(fPctMin) / 100;
+    const max = fPctMax === "" ? null : Number(fPctMax) / 100;
+    return registros.filter((r) => {
+      const f = funcionarios.find((x) => x.id === r.funcionario_id);
+      const setorValor = (r.setor ?? nomeById(projetos.data, f?.projeto_id) ?? "").toLowerCase();
+      const pct = Number(r.percentual_absenteismo ?? 0);
+      return (
+        (!fMes || r.mes.slice(0, 7) === fMes) &&
+        (!fSetor || setorValor.includes(fSetor.toLowerCase())) &&
+        (!fFuncionario || (f?.nome ?? "").toLowerCase().includes(fFuncionario.toLowerCase())) &&
+        (min === null || pct >= min) &&
+        (max === null || pct <= max)
+      );
+    });
+  }, [registros, funcionarios, projetos.data, fMes, fSetor, fFuncionario, fPctMin, fPctMax]);
+
+  const porMes = useMemo(() => {
+    const map = new Map<string, { soma: number; qtd: number }>();
+    for (const r of filtrados) {
+      const key = r.mes.slice(0, 7);
+      const cur = map.get(key) ?? { soma: 0, qtd: 0 };
+      cur.soma += Number(r.percentual_absenteismo ?? 0) * 100;
+      cur.qtd += 1;
+      map.set(key, cur);
+    }
+    return [...map.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, v]) => ({ mes: formatMesBR(key + "-01"), pct: Number((v.soma / v.qtd).toFixed(1)) }));
+  }, [filtrados]);
 
   const importConfig: ImportConfig = useMemo(
     () => ({
@@ -179,7 +226,7 @@ function AbsenteismoPage() {
               : {
                   mes: mesValor,
                   funcionario_id: func!.id,
-                  setor: normalize(raw["SETOR"]) || null,
+                  setor: normalizeText(raw["SETOR"]) || null,
                   horas_ausencia_txt: secondsToHHMMSS(aus!),
                   horas_previstas_txt: secondsToHHMMSS(prev!),
                   horas_ausencia_seg: aus,
@@ -203,6 +250,51 @@ function AbsenteismoPage() {
         </Button>
       </PageHeader>
 
+      {porMes.length > 0 && (
+        <div className="mb-6 rounded-lg border bg-card p-4">
+          <p className="mb-3 text-sm font-medium text-muted-foreground">
+            % médio de absenteísmo por mês
+          </p>
+          <div className="h-56 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={porMes}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="mes" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} unit="%" />
+                <Tooltip formatter={(v: number) => `${v}%`} />
+                <Bar dataKey="pct" fill="var(--chart-2)" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <Input type="month" value={fMes} onChange={(e) => setFMes(e.target.value)} />
+        <Input
+          placeholder="Setor"
+          value={fSetor}
+          onChange={(e) => setFSetor(e.target.value)}
+        />
+        <Input
+          placeholder="Funcionário"
+          value={fFuncionario}
+          onChange={(e) => setFFuncionario(e.target.value)}
+        />
+        <Input
+          type="number"
+          placeholder="% mínimo"
+          value={fPctMin}
+          onChange={(e) => setFPctMin(e.target.value)}
+        />
+        <Input
+          type="number"
+          placeholder="% máximo"
+          value={fPctMax}
+          onChange={(e) => setFPctMax(e.target.value)}
+        />
+      </div>
+
       <div className="overflow-x-auto rounded-lg border bg-card">
         <Table>
           <TableHeader>
@@ -219,7 +311,7 @@ function AbsenteismoPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {registros.map((r) => {
+            {filtrados.map((r) => {
               const f = funcionarios.find((x) => x.id === r.funcionario_id);
               return (
                 <TableRow key={r.id}>
@@ -248,7 +340,7 @@ function AbsenteismoPage() {
                 </TableRow>
               );
             })}
-            {registros.length === 0 && (
+            {filtrados.length === 0 && (
               <TableRow>
                 <TableCell colSpan={9} className="text-muted-foreground">
                   Nenhum registro.

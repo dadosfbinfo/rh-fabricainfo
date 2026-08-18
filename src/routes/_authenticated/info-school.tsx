@@ -9,7 +9,7 @@ import { ImportDialog, type ImportConfig } from "@/components/ImportDialog";
 import { FuncionarioReadOnlyFields, FuncionarioSelect } from "@/components/FuncionarioInfo";
 import { useAuth } from "@/hooks/useAuth";
 import { nomeById, useAux, useFuncionarios } from "@/lib/queries";
-import { STATUS_INFOSCHOOL, STATUS_LABEL, formatDateBR, formatMesBR, normalize, parseExcelDate } from "@/lib/rh";
+import { STATUS_INFOSCHOOL, STATUS_LABEL, formatDateBR, formatMesBR, normalize, normalizeText, parseExcelDate } from "@/lib/rh";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -143,7 +143,7 @@ function InfoSchoolPage() {
               : {
                   mes: mesValor,
                   funcionario_id: func!.id,
-                  status_infoschool: normalize(raw["STATUS INFOSCHOOL"]) || null,
+                  status_infoschool: normalizeText(raw["STATUS INFOSCHOOL"]) || null,
                 },
         };
       },

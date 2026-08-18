@@ -46,6 +46,10 @@ export const Route = createFileRoute("/api/public/rh/$tabela")({
           ? query.is("deleted_at", null)
           : query);
         if (error) return json({ error: error.message }, 500);
+
+        await supabaseAdmin
+          .from("api_access_logs")
+          .insert({ tabela: params.tabela, api_key_id: keyRow.id });
         return json({ tabela: params.tabela, total: data?.length ?? 0, data });
       },
     },
