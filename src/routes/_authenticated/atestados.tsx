@@ -9,7 +9,7 @@ import { ImportDialog, type ImportConfig } from "@/components/ImportDialog";
 import { FuncionarioReadOnlyFields, FuncionarioSelect } from "@/components/FuncionarioInfo";
 import { useAuth } from "@/hooks/useAuth";
 import { nomeById, useAux, useFuncionarios } from "@/lib/queries";
-import { diaDaSemana, formatDateBR, normalize, parseExcelDate, parseNumber } from "@/lib/rh";
+import { diaDaSemana, formatDateBR, normalize, normalizeText, parseExcelDate, parseNumber } from "@/lib/rh";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

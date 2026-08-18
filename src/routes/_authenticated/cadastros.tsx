@@ -6,6 +6,7 @@ import { Pencil, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
+import { normalizeText } from "@/lib/rh";
 import { AUX_TABLES, useAux, type AuxTable } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,7 +51,7 @@ function AuxCrud({ table }: { table: AuxTable }) {
 
   async function adicionar(e: React.FormEvent) {
     e.preventDefault();
-    const nome = novo.trim();
+    const nome = normalizeText(novo);
     if (!nome) return;
     const { error } = await supabase.from(table).insert({ nome });
     if (error) {
@@ -62,7 +63,7 @@ function AuxCrud({ table }: { table: AuxTable }) {
   }
 
   async function salvar(id: string) {
-    const { error } = await supabase.from(table).update({ nome: editNome.trim() }).eq("id", id);
+    const { error } = await supabase.from(table).update({ nome: normalizeText(editNome) }).eq("id", id);
     if (error) {
       toast.error(error.message);
       return;

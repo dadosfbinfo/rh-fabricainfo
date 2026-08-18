@@ -13,9 +13,10 @@ import {
   STATUS_LABEL,
   TIPOS_COLABORADOR,
   anosDeCasa,
-  downloadCSV,
+  downloadXLSX,
   formatDateBR,
   normalizeKey,
+  normalizeText,
   parseExcelDate,
 } from "@/lib/rh";
 import { Button } from "@/components/ui/button";
@@ -146,7 +147,7 @@ function FuncionariosPage() {
     }
     const payload = {
       empresa_id: form.empresa_id || null,
-      nome: form.nome.trim(),
+      nome: normalizeText(form.nome),
       data_admissao: form.data_admissao || null,
       cargo_id: form.cargo_id || null,
       projeto_id: form.projeto_id || null,
@@ -182,8 +183,8 @@ function FuncionariosPage() {
   }
 
   function exportar() {
-    downloadCSV(
-      "funcionarios.csv",
+    downloadXLSX(
+      "funcionarios.xlsx",
       filtrados.map((f) => ({
         EMPRESA: nomeById(empresas.data, f.empresa_id),
         FUNCIONARIO: f.nome,
