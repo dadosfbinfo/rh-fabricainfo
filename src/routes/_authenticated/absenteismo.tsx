@@ -119,7 +119,7 @@ function AbsenteismoPage() {
     const { error } = await supabase.from("absenteismo").insert({
       mes: `${mes}-01`,
       funcionario_id: funcionarioId,
-      setor: setor || null,
+      setor: normalizeText(setor) || null,
       horas_ausencia_txt: ausencia,
       horas_previstas_txt: previstas,
       horas_ausencia_seg: segAus,

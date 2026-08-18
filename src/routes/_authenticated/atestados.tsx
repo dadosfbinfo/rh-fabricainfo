@@ -89,7 +89,7 @@ function AtestadosPage() {
     }
     const { error } = await supabase.from("atestado").insert({
       funcionario_id: funcionarioId,
-      cid: cid.trim() || null,
+      cid: normalizeText(cid) || null,
       data,
       total_dias: dias === "" ? null : Number(dias),
     });
