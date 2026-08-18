@@ -143,7 +143,7 @@ function InfoSchoolPage() {
               : {
                   mes: mesValor,
                   funcionario_id: func!.id,
-                  status_infoschool: normalize(raw["STATUS INFOSCHOOL"]) || null,
+                  status_infoschool: normalizeText(raw["STATUS INFOSCHOOL"]) || null,
                 },
         };
       },

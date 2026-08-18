@@ -136,7 +136,7 @@ function AtestadosPage() {
               ? null
               : {
                   funcionario_id: func!.id,
-                  cid: normalize(raw["CID"]) || null,
+                  cid: normalizeText(raw["CID"]) || null,
                   data: dataValor,
                   total_dias: total,
                 },

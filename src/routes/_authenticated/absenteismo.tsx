@@ -13,6 +13,7 @@ import {
   formatMesBR,
   hhmmssToSeconds,
   normalize,
+  normalizeText,
   parseExcelDate,
   percent,
   secondsToHHMMSS,
@@ -179,7 +180,7 @@ function AbsenteismoPage() {
               : {
                   mes: mesValor,
                   funcionario_id: func!.id,
-                  setor: normalize(raw["SETOR"]) || null,
+                  setor: normalizeText(raw["SETOR"]) || null,
                   horas_ausencia_txt: secondsToHHMMSS(aus!),
                   horas_previstas_txt: secondsToHHMMSS(prev!),
                   horas_ausencia_seg: aus,
