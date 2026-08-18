@@ -19,11 +19,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const ROLES: AppRole[] = ["ADMINISTRADOR", "EDITOR", "VISUALIZADOR"];
+const ROLES: AppRole[] = ["ADMINISTRADOR_DEV", "ADMINISTRADOR", "EDITOR", "VISUALIZADOR"];
 const SEM_ACESSO = "SEM_ACESSO";
 
 export function UsuariosRoles() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isDev } = useAuth();
   const qc = useQueryClient();
 
   const { data: usuarios = [] } = useQuery({
@@ -96,7 +96,7 @@ export function UsuariosRoles() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {ROLES.map((r) => (
+                      {ROLES.filter((r) => r !== "ADMINISTRADOR_DEV" || isDev).map((r) => (
                         <SelectItem key={r} value={r}>
                           {r}
                         </SelectItem>
