@@ -18,6 +18,7 @@ import { Route as AuthenticatedAtestadosRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAvaliacoesRouteImport } from './routes/_authenticated/avaliacoes'
 import { Route as AuthenticatedCadastrosRouteImport } from './routes/_authenticated/cadastros'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDesligamentosRouteImport } from './routes/_authenticated/desligamentos'
 import { Route as AuthenticatedFuncionariosRouteImport } from './routes/_authenticated/funcionarios'
 import { Route as AuthenticatedInfoSchoolRouteImport } from './routes/_authenticated/info-school'
 import { Route as AuthenticatedUsuariosRouteImport } from './routes/_authenticated/usuarios'
@@ -68,6 +69,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDesligamentosRoute =
+  AuthenticatedDesligamentosRouteImport.update({
+    id: '/desligamentos',
+    path: '/desligamentos',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedFuncionariosRoute =
   AuthenticatedFuncionariosRouteImport.update({
     id: '/funcionarios',
@@ -99,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/avaliacoes': typeof AuthenticatedAvaliacoesRoute
   '/cadastros': typeof AuthenticatedCadastrosRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/desligamentos': typeof AuthenticatedDesligamentosRoute
   '/funcionarios': typeof AuthenticatedFuncionariosRoute
   '/info-school': typeof AuthenticatedInfoSchoolRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
@@ -113,6 +121,7 @@ export interface FileRoutesByTo {
   '/avaliacoes': typeof AuthenticatedAvaliacoesRoute
   '/cadastros': typeof AuthenticatedCadastrosRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/desligamentos': typeof AuthenticatedDesligamentosRoute
   '/funcionarios': typeof AuthenticatedFuncionariosRoute
   '/info-school': typeof AuthenticatedInfoSchoolRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
@@ -129,6 +138,7 @@ export interface FileRoutesById {
   '/_authenticated/avaliacoes': typeof AuthenticatedAvaliacoesRoute
   '/_authenticated/cadastros': typeof AuthenticatedCadastrosRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/desligamentos': typeof AuthenticatedDesligamentosRoute
   '/_authenticated/funcionarios': typeof AuthenticatedFuncionariosRoute
   '/_authenticated/info-school': typeof AuthenticatedInfoSchoolRoute
   '/_authenticated/usuarios': typeof AuthenticatedUsuariosRoute
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/avaliacoes'
     | '/cadastros'
     | '/dashboard'
+    | '/desligamentos'
     | '/funcionarios'
     | '/info-school'
     | '/usuarios'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '/avaliacoes'
     | '/cadastros'
     | '/dashboard'
+    | '/desligamentos'
     | '/funcionarios'
     | '/info-school'
     | '/usuarios'
@@ -174,6 +186,7 @@ export interface FileRouteTypes {
     | '/_authenticated/avaliacoes'
     | '/_authenticated/cadastros'
     | '/_authenticated/dashboard'
+    | '/_authenticated/desligamentos'
     | '/_authenticated/funcionarios'
     | '/_authenticated/info-school'
     | '/_authenticated/usuarios'
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/desligamentos': {
+      id: '/_authenticated/desligamentos'
+      path: '/desligamentos'
+      fullPath: '/desligamentos'
+      preLoaderRoute: typeof AuthenticatedDesligamentosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/funcionarios': {
       id: '/_authenticated/funcionarios'
       path: '/funcionarios'
@@ -290,6 +310,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAvaliacoesRoute: typeof AuthenticatedAvaliacoesRoute
   AuthenticatedCadastrosRoute: typeof AuthenticatedCadastrosRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDesligamentosRoute: typeof AuthenticatedDesligamentosRoute
   AuthenticatedFuncionariosRoute: typeof AuthenticatedFuncionariosRoute
   AuthenticatedInfoSchoolRoute: typeof AuthenticatedInfoSchoolRoute
   AuthenticatedUsuariosRoute: typeof AuthenticatedUsuariosRoute
@@ -302,6 +323,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAvaliacoesRoute: AuthenticatedAvaliacoesRoute,
   AuthenticatedCadastrosRoute: AuthenticatedCadastrosRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDesligamentosRoute: AuthenticatedDesligamentosRoute,
   AuthenticatedFuncionariosRoute: AuthenticatedFuncionariosRoute,
   AuthenticatedInfoSchoolRoute: AuthenticatedInfoSchoolRoute,
   AuthenticatedUsuariosRoute: AuthenticatedUsuariosRoute,

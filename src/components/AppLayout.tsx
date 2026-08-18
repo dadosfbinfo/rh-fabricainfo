@@ -10,6 +10,8 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  UserMinus,
+  ShieldCheck,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,19 +19,37 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-const NAV = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/funcionarios", label: "Funcionários", icon: Users },
-  { to: "/cadastros", label: "Cadastros auxiliares", icon: Database },
-  { to: "/info-school", label: "Info School", icon: GraduationCap },
-  { to: "/avaliacoes", label: "Avaliação de desempenho", icon: Gauge },
-  { to: "/atestados", label: "Atestado", icon: FileHeart },
-  { to: "/absenteismo", label: "Absenteísmo", icon: CalendarX },
-  { to: "/api", label: "API", icon: Plug, adminOnly: true },
-] as const;
+type NavItem = {
+  to: string;
+  label: string;
+  icon: typeof Users;
+  devOnly?: boolean;
+};
+
+const GRUPOS: { titulo: string; itens: NavItem[] }[] = [
+  {
+    titulo: "Relatórios",
+    itens: [
+      { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { to: "/desligamentos", label: "Desligamentos", icon: UserMinus },
+      { to: "/api", label: "API", icon: Plug, devOnly: true },
+    ],
+  },
+  {
+    titulo: "Cadastros & Bases",
+    itens: [
+      { to: "/funcionarios", label: "Funcionários", icon: Users },
+      { to: "/cadastros", label: "Cadastros auxiliares", icon: Database },
+      { to: "/info-school", label: "Info School", icon: GraduationCap },
+      { to: "/avaliacoes", label: "Avaliação de desempenho", icon: Gauge },
+      { to: "/atestados", label: "Atestado", icon: FileHeart },
+      { to: "/absenteismo", label: "Absenteísmo", icon: CalendarX },
+    ],
+  },
+];
 
 export function AppLayout({ children }: { children: ReactNode }) {
-  const { user, role, roleLoaded, isAdmin, signOut } = useAuth();
+  const { user, role, roleLoaded, isAdmin, isDev, signOut } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
 
@@ -64,33 +84,53 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </p>
           <h1 className="mt-1 text-lg font-bold">Sistema RH / DP</h1>
         </div>
-        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-          {NAV.filter((i) => !("adminOnly" in i && i.adminOnly) || isAdmin).map((item) => {
-            const Icon = item.icon;
-            const active = pathname === item.to;
+        <nav className="flex-1 space-y-5 overflow-y-auto p-3">
+          {GRUPOS.map((grupo) => {
+            const itens = grupo.itens.filter((i) => !i.devOnly || isDev);
+            if (itens.length === 0) return null;
             return (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  active
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                    : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                )}
-              >
-                <Icon className="size-4" />
-                {item.label}
-              </Link>
+              <div key={grupo.titulo} className="space-y-1">
+                <p className="px-3 pb-1 text-[11px] font-semibold tracking-[0.16em] text-sidebar-primary uppercase">
+                  {grupo.titulo}
+                </p>
+                {itens.map((item) => {
+                  const Icon = item.icon;
+                  const active = pathname === item.to;
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                        active
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                          : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                      )}
+                    >
+                      <Icon className="size-4" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
             );
           })}
         </nav>
         <div className="border-t border-sidebar-border p-4 text-sm">
           <p className="truncate font-medium">{user?.email}</p>
           <Badge variant="secondary" className="mt-2">
-            {role ?? "—"}
+            {(role ?? "—").replace("_", " ")}
           </Badge>
+          {isAdmin && (
+            <Link
+              to="/usuarios"
+              onClick={() => setOpen(false)}
+              className="mt-3 flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            >
+              <ShieldCheck className="size-4" /> Administração · Usuários
+            </Link>
+          )}
           <Button
             variant="ghost"
             size="sm"

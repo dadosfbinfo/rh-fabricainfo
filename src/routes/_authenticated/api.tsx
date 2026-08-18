@@ -48,14 +48,14 @@ function gerarChave() {
 }
 
 function ApiPage() {
-  const { isAdmin, user } = useAuth();
+  const { isDev, user } = useAuth();
   const qc = useQueryClient();
   const [gerando, setGerando] = useState(false);
   const base = typeof window !== "undefined" ? window.location.origin : "";
 
   const { data: chaves = [] } = useQuery({
     queryKey: ["api_keys"],
-    enabled: isAdmin,
+    enabled: isDev,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("api_keys")
@@ -66,13 +66,13 @@ function ApiPage() {
     },
   });
 
-  if (!isAdmin) {
+  if (!isDev) {
     return (
       <div className="mx-auto max-w-md rounded-lg border bg-card p-8 text-center">
         <ShieldAlert className="mx-auto size-10 text-destructive" />
         <h1 className="mt-4 text-xl font-semibold">Acesso negado</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Esta área é restrita a usuários com a função ADMINISTRADOR.
+          Esta área é restrita a usuários com a função ADMINISTRADOR DEV.
         </p>
       </div>
     );

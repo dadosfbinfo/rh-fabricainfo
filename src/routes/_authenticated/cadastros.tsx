@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UsuariosRoles } from "@/components/UsuariosRoles";
 
 export const Route = createFileRoute("/_authenticated/cadastros")({
   head: () => ({
@@ -167,16 +166,12 @@ function Cadastros() {
               {LABELS[t]}
             </TabsTrigger>
           ))}
-          <TabsTrigger value="usuarios">Usuários</TabsTrigger>
         </TabsList>
         {AUX_TABLES.map((t) => (
           <TabsContent key={t} value={t}>
             <AuxCrud table={t} />
           </TabsContent>
         ))}
-        <TabsContent value="usuarios">
-          <UsuariosRoles />
-        </TabsContent>
       </Tabs>
     </>
   );
