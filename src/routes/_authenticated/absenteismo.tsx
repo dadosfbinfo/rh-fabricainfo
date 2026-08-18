@@ -14,7 +14,6 @@ import {
   hhmmssToSeconds,
   normalize,
   normalizeText,
-  normalizeText,
   parseExcelDate,
   percent,
   secondsToHHMMSS,
