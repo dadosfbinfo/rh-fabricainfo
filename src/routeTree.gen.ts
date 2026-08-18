@@ -20,6 +20,7 @@ import { Route as AuthenticatedCadastrosRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedFuncionariosRouteImport } from './routes/_authenticated/funcionarios'
 import { Route as AuthenticatedInfoSchoolRouteImport } from './routes/_authenticated/info-school'
+import { Route as AuthenticatedUsuariosRouteImport } from './routes/_authenticated/usuarios'
 import { Route as ApiPublicRhTabelaRouteImport } from './routes/api/public/rh.$tabela'
 
 const IndexRoute = IndexRouteImport.update({
@@ -78,6 +79,11 @@ const AuthenticatedInfoSchoolRoute = AuthenticatedInfoSchoolRouteImport.update({
   path: '/info-school',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedUsuariosRoute = AuthenticatedUsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiPublicRhTabelaRoute = ApiPublicRhTabelaRouteImport.update({
   id: '/api/public/rh/$tabela',
   path: '/api/public/rh/$tabela',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/funcionarios': typeof AuthenticatedFuncionariosRoute
   '/info-school': typeof AuthenticatedInfoSchoolRoute
+  '/usuarios': typeof AuthenticatedUsuariosRoute
   '/api/public/rh/$tabela': typeof ApiPublicRhTabelaRoute
 }
 export interface FileRoutesByTo {
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/funcionarios': typeof AuthenticatedFuncionariosRoute
   '/info-school': typeof AuthenticatedInfoSchoolRoute
+  '/usuarios': typeof AuthenticatedUsuariosRoute
   '/api/public/rh/$tabela': typeof ApiPublicRhTabelaRoute
 }
 export interface FileRoutesById {
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/funcionarios': typeof AuthenticatedFuncionariosRoute
   '/_authenticated/info-school': typeof AuthenticatedInfoSchoolRoute
+  '/_authenticated/usuarios': typeof AuthenticatedUsuariosRoute
   '/api/public/rh/$tabela': typeof ApiPublicRhTabelaRoute
 }
 export interface FileRouteTypes {
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/funcionarios'
     | '/info-school'
+    | '/usuarios'
     | '/api/public/rh/$tabela'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/funcionarios'
     | '/info-school'
+    | '/usuarios'
     | '/api/public/rh/$tabela'
   id:
     | '__root__'
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/funcionarios'
     | '/_authenticated/info-school'
+    | '/_authenticated/usuarios'
     | '/api/public/rh/$tabela'
   fileRoutesById: FileRoutesById
 }
@@ -254,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInfoSchoolRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/usuarios': {
+      id: '/_authenticated/usuarios'
+      path: '/usuarios'
+      fullPath: '/usuarios'
+      preLoaderRoute: typeof AuthenticatedUsuariosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/rh/$tabela': {
       id: '/api/public/rh/$tabela'
       path: '/api/public/rh/$tabela'
@@ -273,6 +292,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFuncionariosRoute: typeof AuthenticatedFuncionariosRoute
   AuthenticatedInfoSchoolRoute: typeof AuthenticatedInfoSchoolRoute
+  AuthenticatedUsuariosRoute: typeof AuthenticatedUsuariosRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -284,6 +304,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFuncionariosRoute: AuthenticatedFuncionariosRoute,
   AuthenticatedInfoSchoolRoute: AuthenticatedInfoSchoolRoute,
+  AuthenticatedUsuariosRoute: AuthenticatedUsuariosRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
