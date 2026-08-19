@@ -117,6 +117,7 @@ export function UsuariosRoles() {
               <TableHead>Nome</TableHead>
               <TableHead>E-mail</TableHead>
               <TableHead>Função</TableHead>
+              <TableHead />
             </TableRow>
           </TableHeader>
           <TableBody>
