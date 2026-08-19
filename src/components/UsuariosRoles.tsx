@@ -143,17 +143,58 @@ export function UsuariosRoles() {
                     </SelectContent>
                   </Select>
                 </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="text-destructive"
+                    disabled={u.id === user?.id}
+                    title={
+                      u.id === user?.id
+                        ? "Você não pode excluir a própria conta"
+                        : "Excluir usuário"
+                    }
+                    onClick={() => setAlvo({ id: u.id, nome: u.nome, email: u.email })}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
             {usuarios.length === 0 && (
               <TableRow>
-                <TableCell colSpan={3} className="text-muted-foreground">
+                <TableCell colSpan={4} className="text-muted-foreground">
                   Nenhum usuário cadastrado.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+
+        <AlertDialog open={alvo !== null} onOpenChange={(o) => !o && setAlvo(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Remover usuário</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja remover o acesso de{" "}
+                <strong>{alvo?.nome || alvo?.email}</strong>? O login e o perfil serão excluídos e a
+                sessão ativa será invalidada. Essa ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={removendo}>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={removendo}
+                onClick={(e) => {
+                  e.preventDefault();
+                  void confirmarExclusao();
+                }}
+              >
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
   );
