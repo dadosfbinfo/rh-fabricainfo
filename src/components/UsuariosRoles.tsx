@@ -37,9 +37,15 @@ import {
 const ROLES: AppRole[] = ["ADMINISTRADOR_DEV", "ADMINISTRADOR", "EDITOR", "VISUALIZADOR"];
 const SEM_ACESSO = "SEM_ACESSO";
 
+type UsuarioLinha = { id: string; nome: string | null; email: string | null };
+
 export function UsuariosRoles() {
-  const { isAdmin, isDev } = useAuth();
+  const { isAdmin, isDev, user } = useAuth();
   const qc = useQueryClient();
+  const remover = useServerFn(excluirUsuario);
+  const [alvo, setAlvo] = useState<UsuarioLinha | null>(null);
+  const [removendo, setRemovendo] = useState(false);
+
 
   const { data: usuarios = [] } = useQuery({
     queryKey: ["usuarios_roles"],
