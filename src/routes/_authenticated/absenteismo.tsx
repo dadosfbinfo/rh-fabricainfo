@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Trash2 } from "lucide-react";
+import { Download, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppLayout";
 import { ImportDialog, type ImportConfig } from "@/components/ImportDialog";
@@ -10,6 +10,7 @@ import { FuncionarioSelect } from "@/components/FuncionarioInfo";
 import { useAuth } from "@/hooks/useAuth";
 import { nomeById, useAux, useFuncionarios } from "@/lib/queries";
 import {
+  downloadXLSX,
   formatMesBR,
   hhmmssToSeconds,
   normalize,
@@ -194,6 +195,28 @@ function AbsenteismoPage() {
       .map(([key, v]) => ({ mes: formatMesBR(key + "-01"), pct: Number((v.soma / v.qtd).toFixed(1)) }));
   }, [filtrados]);
 
+  function exportar() {
+    downloadXLSX(
+      "absenteismo.xlsx",
+      filtrados.map((r) => {
+        const f = funcionarios.find((x) => x.id === r.funcionario_id);
+        const aus = Number(r.horas_ausencia_num ?? 0);
+        const prev = Number(r.horas_previstas_num ?? 0);
+        return {
+          MES: formatMesBR(r.mes),
+          FUNCIONARIO: f?.nome ?? "",
+          SETOR: r.setor ?? nomeById(projetos.data, f?.projeto_id),
+          "HORAS DE AUSENCIAS": r.horas_ausencia_txt,
+          "HORAS PREVISTAS": r.horas_previstas_txt,
+          "HORAS DE AUSENCIAS (Nº)": Number(aus.toFixed(4)),
+          "HORAS PREVISTAS (Nº)": Number(prev.toFixed(4)),
+          "% ABSENTEISMO": Number((Number(r.percentual_absenteismo ?? 0) * 100).toFixed(2)),
+        };
+      }),
+      "Absenteismo",
+    );
+  }
+
   const importConfig: ImportConfig = useMemo(
     () => ({
       table: "absenteismo",
@@ -244,6 +267,9 @@ function AbsenteismoPage() {
         title="Absenteísmo"
         description="As horas em HH:MM:SS são convertidas em dias decimais (segundos ÷ 86400) e gravadas no banco."
       >
+        <Button variant="outline" onClick={exportar}>
+          <Download className="size-4" /> Exportar XLSX
+        </Button>
         <ImportDialog config={importConfig} disabled={!canEdit} />
         <Button onClick={() => setOpen(true)} disabled={!canEdit}>
           <Plus className="size-4" /> Novo registro

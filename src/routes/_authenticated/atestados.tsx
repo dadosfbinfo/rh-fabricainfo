@@ -2,14 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Trash2 } from "lucide-react";
+import { Download, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppLayout";
 import { ImportDialog, type ImportConfig } from "@/components/ImportDialog";
 import { FuncionarioReadOnlyFields, FuncionarioSelect } from "@/components/FuncionarioInfo";
 import { useAuth } from "@/hooks/useAuth";
 import { nomeById, useAux, useFuncionarios } from "@/lib/queries";
-import { diaDaSemana, formatDateBR, normalize, normalizeText, parseExcelDate, parseNumber } from "@/lib/rh";
+import { diaDaSemana, downloadXLSX, formatDateBR, normalize, normalizeText, parseExcelDate, parseNumber } from "@/lib/rh";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -115,6 +115,24 @@ function AtestadosPage() {
     void qc.invalidateQueries({ queryKey: ["atestado"] });
   }
 
+  function exportar() {
+    downloadXLSX(
+      "atestados.xlsx",
+      registros.map((r) => {
+        const f = funcionarios.find((x) => x.id === r.funcionario_id);
+        return {
+          COLABORADOR: f?.nome ?? "",
+          PROJETO: nomeById(projetos.data, f?.projeto_id),
+          CID: r.cid ?? "",
+          DATA: formatDateBR(r.data),
+          "DIA DA SEMANA": diaDaSemana(r.data),
+          "TOTAL DE DIAS": r.total_dias ?? "",
+        };
+      }),
+      "Atestados",
+    );
+  }
+
   const importConfig: ImportConfig = useMemo(
     () => ({
       table: "atestado",
@@ -152,6 +170,9 @@ function AtestadosPage() {
         title="Atestado"
         description="O projeto e o dia da semana são preenchidos automaticamente."
       >
+        <Button variant="outline" onClick={exportar}>
+          <Download className="size-4" /> Exportar XLSX
+        </Button>
         <ImportDialog config={importConfig} disabled={!canEdit} />
         <Button onClick={() => setOpen(true)} disabled={!canEdit}>
           <Plus className="size-4" /> Novo atestado
