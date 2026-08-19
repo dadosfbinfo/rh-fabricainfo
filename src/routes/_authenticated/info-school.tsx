@@ -120,6 +120,28 @@ function InfoSchoolPage() {
     void qc.invalidateQueries({ queryKey: ["info_school"] });
   }
 
+  function exportar() {
+    downloadXLSX(
+      "info-school.xlsx",
+      registros.map((r) => {
+        const f = funcionarios.find((x) => x.id === r.funcionario_id);
+        return {
+          MES: formatMesBR(r.mes),
+          ANO: r.mes.slice(0, 4),
+          EMPRESA: nomeById(empresas.data, f?.empresa_id),
+          FUNCIONARIO: f?.nome ?? "",
+          ADMISSAO: formatDateBR(f?.data_admissao),
+          CARGO: nomeById(cargos.data, f?.cargo_id),
+          PROJETO: nomeById(projetos.data, f?.projeto_id),
+          GESTOR: nomeById(gestores.data, f?.gestor_id),
+          "STATUS COLABORADOR": f?.status ?? "",
+          "STATUS INFO SCHOOL": r.status_infoschool ?? "",
+        };
+      }),
+      "Info School",
+    );
+  }
+
   const importConfig: ImportConfig = useMemo(
     () => ({
       table: "info_school",
