@@ -2,14 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Trash2 } from "lucide-react";
+import { Download, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppLayout";
 import { ImportDialog, type ImportConfig } from "@/components/ImportDialog";
 import { FuncionarioReadOnlyFields, FuncionarioSelect } from "@/components/FuncionarioInfo";
 import { useAuth } from "@/hooks/useAuth";
 import { nomeById, useAux, useFuncionarios } from "@/lib/queries";
-import { STATUS_INFOSCHOOL, STATUS_LABEL, formatDateBR, formatMesBR, normalize, normalizeText, parseExcelDate } from "@/lib/rh";
+import { STATUS_INFOSCHOOL, STATUS_LABEL, downloadXLSX, formatDateBR, formatMesBR, normalize, normalizeText, parseExcelDate } from "@/lib/rh";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -120,6 +120,28 @@ function InfoSchoolPage() {
     void qc.invalidateQueries({ queryKey: ["info_school"] });
   }
 
+  function exportar() {
+    downloadXLSX(
+      "info-school.xlsx",
+      registros.map((r) => {
+        const f = funcionarios.find((x) => x.id === r.funcionario_id);
+        return {
+          MES: formatMesBR(r.mes),
+          ANO: r.mes.slice(0, 4),
+          EMPRESA: nomeById(empresas.data, f?.empresa_id),
+          FUNCIONARIO: f?.nome ?? "",
+          ADMISSAO: formatDateBR(f?.data_admissao),
+          CARGO: nomeById(cargos.data, f?.cargo_id),
+          PROJETO: nomeById(projetos.data, f?.projeto_id),
+          GESTOR: nomeById(gestores.data, f?.gestor_id),
+          "STATUS COLABORADOR": f?.status ?? "",
+          "STATUS INFO SCHOOL": r.status_infoschool ?? "",
+        };
+      }),
+      "Info School",
+    );
+  }
+
   const importConfig: ImportConfig = useMemo(
     () => ({
       table: "info_school",
@@ -157,6 +179,9 @@ function InfoSchoolPage() {
         title="Info School"
         description="Os dados do colaborador são preenchidos automaticamente a partir do cadastro mestre."
       >
+        <Button variant="outline" onClick={exportar}>
+          <Download className="size-4" /> Exportar XLSX
+        </Button>
         <ImportDialog config={importConfig} disabled={!canEdit} />
         <Button onClick={() => setOpen(true)} disabled={!canEdit}>
           <Plus className="size-4" /> Novo registro

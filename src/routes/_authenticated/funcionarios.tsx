@@ -279,7 +279,7 @@ function FuncionariosPage() {
         description="Cadastro mestre. Todas as demais abas puxam os dados daqui."
       >
         <Button variant="outline" onClick={exportar}>
-          <Download className="size-4" /> Exportar CSV
+          <Download className="size-4" /> Exportar XLSX
         </Button>
         <ImportDialog config={importConfig} disabled={!canEdit} />
         <Button onClick={abrirNovo} disabled={!canEdit}>

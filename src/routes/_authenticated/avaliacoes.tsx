@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Trash2 } from "lucide-react";
+import { Download, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppLayout";
 import { ImportDialog, type ImportConfig } from "@/components/ImportDialog";
@@ -12,6 +12,7 @@ import { nomeById, useAux, useFuncionarios } from "@/lib/queries";
 import {
   STATUS_LABEL,
   anosDeCasa,
+  downloadXLSX,
   formatDateBR,
   normalize,
   parseExcelDate,
@@ -128,6 +129,32 @@ function AvaliacoesPage() {
     void qc.invalidateQueries({ queryKey: ["avaliacao_desempenho"] });
   }
 
+  function exportar() {
+    downloadXLSX(
+      "avaliacoes.xlsx",
+      registros.map((r) => {
+        const f = funcionarios.find((x) => x.id === r.funcionario_id);
+        return {
+          FUNCIONARIO: f?.nome ?? "",
+          EMPRESA: nomeById(empresas.data, f?.empresa_id),
+          ADMISSAO: formatDateBR(f?.data_admissao),
+          "ANOS DE CASA": anosDeCasa(f?.data_admissao, f?.data_desligamento, f?.status) ?? "",
+          CARGO: nomeById(cargos.data, f?.cargo_id),
+          PROJETO: nomeById(projetos.data, f?.projeto_id),
+          GESTOR: nomeById(gestores.data, f?.gestor_id),
+          STATUS: f?.status ?? "",
+          DESLIGAMENTO: f?.data_desligamento ? formatDateBR(f.data_desligamento) : "",
+          "DATA AVALIACAO": formatDateBR(r.data_avaliacao),
+          ANO: r.data_avaliacao.slice(0, 4),
+          "HARD SKILL": r.hard_skill ?? "",
+          "SOFT SKILL": r.soft_skill ?? "",
+          "NOTA FINAL": r.nota_final !== null ? Number(r.nota_final) : "",
+        };
+      }),
+      "Avaliacoes",
+    );
+  }
+
   const importConfig: ImportConfig = useMemo(
     () => ({
       table: "avaliacao_desempenho",
@@ -168,6 +195,9 @@ function AvaliacoesPage() {
         title="Avaliação de desempenho"
         description="Nota final = média simples entre Hard Skill e Soft Skill."
       >
+        <Button variant="outline" onClick={exportar}>
+          <Download className="size-4" /> Exportar XLSX
+        </Button>
         <ImportDialog config={importConfig} disabled={!canEdit} />
         <Button onClick={() => setOpen(true)} disabled={!canEdit}>
           <Plus className="size-4" /> Nova avaliação
