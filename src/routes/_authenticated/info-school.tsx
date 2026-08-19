@@ -179,6 +179,9 @@ function InfoSchoolPage() {
         title="Info School"
         description="Os dados do colaborador são preenchidos automaticamente a partir do cadastro mestre."
       >
+        <Button variant="outline" onClick={exportar}>
+          <Download className="size-4" /> Exportar XLSX
+        </Button>
         <ImportDialog config={importConfig} disabled={!canEdit} />
         <Button onClick={() => setOpen(true)} disabled={!canEdit}>
           <Plus className="size-4" /> Novo registro
