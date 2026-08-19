@@ -76,6 +76,22 @@ export function UsuariosRoles() {
     void qc.invalidateQueries({ queryKey: ["usuarios_roles"] });
   }
 
+  async function confirmarExclusao() {
+    if (!alvo) return;
+    setRemovendo(true);
+    try {
+      await remover({ data: { userId: alvo.id } });
+      toast.success("Usuário removido.");
+      setAlvo(null);
+      void qc.invalidateQueries({ queryKey: ["usuarios_roles"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Não foi possível remover o usuário.");
+    } finally {
+      setRemovendo(false);
+    }
+  }
+
+
   if (!isAdmin) {
     return (
       <Card>
