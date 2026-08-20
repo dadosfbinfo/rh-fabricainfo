@@ -46,6 +46,7 @@ export const Route = createFileRoute("/_authenticated/desligamentos")({
 const ALL = "__all__";
 
 function DesligamentosPage() {
+  const { canEdit } = useAuth();
   const { data: funcionarios = [] } = useFuncionarios();
   const empresas = useAux("empresas");
   const cargos = useAux("cargos");
@@ -94,9 +95,11 @@ function DesligamentosPage() {
         title="Desligamentos"
         description="Relatório somente leitura. A edição continua sendo feita na aba Funcionários."
       >
-        <Button onClick={() => downloadXLSX("desligamentos.xlsx", asRows(), "Desligamentos")}>
-          <Download className="size-4" /> Exportar XLSX
-        </Button>
+        {canEdit && (
+          <Button onClick={() => downloadXLSX("desligamentos.xlsx", asRows(), "Desligamentos")}>
+            <Download className="size-4" /> Exportar XLSX
+          </Button>
+        )}
       </PageHeader>
 
       <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
