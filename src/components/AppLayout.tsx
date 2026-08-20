@@ -26,7 +26,7 @@ type NavItem = {
   devOnly?: boolean;
 };
 
-const GRUPOS: { titulo: string; itens: NavItem[] }[] = [
+const GRUPOS: { titulo: string; itens: NavItem[]; editorOnly?: boolean }[] = [
   {
     titulo: "Relatórios",
     itens: [
@@ -37,6 +37,7 @@ const GRUPOS: { titulo: string; itens: NavItem[] }[] = [
   },
   {
     titulo: "Cadastros & Bases",
+    editorOnly: true,
     itens: [
       { to: "/funcionarios", label: "Funcionários", icon: Users },
       { to: "/cadastros", label: "Cadastros auxiliares", icon: Database },
@@ -49,7 +50,7 @@ const GRUPOS: { titulo: string; itens: NavItem[] }[] = [
 ];
 
 export function AppLayout({ children }: { children: ReactNode }) {
-  const { user, role, roleLoaded, isAdmin, isDev, signOut } = useAuth();
+  const { user, role, roleLoaded, isAdmin, isDev, canEdit, signOut } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
 
@@ -86,6 +87,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </div>
         <nav className="flex-1 space-y-5 overflow-y-auto p-3">
           {GRUPOS.map((grupo) => {
+            if (grupo.editorOnly && !canEdit) return null;
             const itens = grupo.itens.filter((i) => !i.devOnly || isDev);
             if (itens.length === 0) return null;
             return (
@@ -151,6 +153,20 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </header>
         <main className="min-w-0 flex-1 p-4 lg:p-8">{children}</main>
       </div>
+    </div>
+  );
+}
+
+export function AcessoNegado({
+  mensagem = "Você não tem permissão para acessar esta área.",
+}: {
+  mensagem?: string;
+}) {
+  return (
+    <div className="mx-auto max-w-md rounded-lg border bg-card p-8 text-center">
+      <ShieldCheck className="mx-auto size-10 text-destructive" />
+      <h1 className="mt-4 text-xl font-semibold">Acesso restrito</h1>
+      <p className="mt-2 text-sm text-muted-foreground">{mensagem}</p>
     </div>
   );
 }

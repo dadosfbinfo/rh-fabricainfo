@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { PageHeader } from "@/components/AppLayout";
+import { AcessoNegado, PageHeader } from "@/components/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { normalizeText } from "@/lib/rh";
 import { AUX_TABLES, useAux, type AuxTable } from "@/lib/queries";
@@ -153,6 +153,16 @@ function AuxCrud({ table }: { table: AuxTable }) {
 }
 
 function Cadastros() {
+  const { canEdit } = useAuth();
+  if (!canEdit) {
+    return (
+      <AcessoNegado mensagem="Esta área é restrita a editores e administradores. Seu perfil possui acesso somente aos relatórios." />
+    );
+  }
+  return <CadastrosConteudo />;
+}
+
+function CadastrosConteudo() {
   return (
     <>
       <PageHeader

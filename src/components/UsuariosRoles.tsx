@@ -62,7 +62,11 @@ export function UsuariosRoles() {
   });
 
   async function alterar(userId: string, role: string) {
-    await supabase.from("user_roles").delete().eq("user_id", userId);
+    const { error: delError } = await supabase.from("user_roles").delete().eq("user_id", userId);
+    if (delError) {
+      toast.error(delError.message);
+      return;
+    }
     if (role !== SEM_ACESSO) {
       const { error } = await supabase
         .from("user_roles")
@@ -121,16 +125,25 @@ export function UsuariosRoles() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {usuarios.map((u) => (
+            {usuarios.map((u) => {
+              const bloqueado = u.role === "ADMINISTRADOR_DEV" && !isDev;
+              return (
               <TableRow key={u.id}>
                 <TableCell>{u.nome ?? "—"}</TableCell>
                 <TableCell>{u.email ?? "—"}</TableCell>
                 <TableCell className="w-64">
                   <Select
                     value={u.role ?? SEM_ACESSO}
+                    disabled={bloqueado}
                     onValueChange={(v) => void alterar(u.id, v)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger
+                      title={
+                        bloqueado
+                          ? "Somente ADMINISTRADOR DEV pode alterar um ADMINISTRADOR DEV"
+                          : undefined
+                      }
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -148,11 +161,13 @@ export function UsuariosRoles() {
                     size="icon"
                     variant="ghost"
                     className="text-destructive"
-                    disabled={u.id === user?.id}
+                    disabled={u.id === user?.id || bloqueado}
                     title={
                       u.id === user?.id
                         ? "Você não pode excluir a própria conta"
-                        : "Excluir usuário"
+                        : bloqueado
+                          ? "Somente ADMINISTRADOR DEV pode excluir um ADMINISTRADOR DEV"
+                          : "Excluir usuário"
                     }
                     onClick={() => setAlvo({ id: u.id, nome: u.nome, email: u.email })}
                   >
@@ -160,7 +175,8 @@ export function UsuariosRoles() {
                   </Button>
                 </TableCell>
               </TableRow>
-            ))}
+              );
+            })}
             {usuarios.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="text-muted-foreground">
