@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Download } from "lucide-react";
 import { PageHeader } from "@/components/AppLayout";
+import { useAuth } from "@/hooks/useAuth";
 import { nomeById, useAux, useFuncionarios } from "@/lib/queries";
 import { anosDeCasa, downloadXLSX, formatDateBR } from "@/lib/rh";
 import { Button } from "@/components/ui/button";
