@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Download, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { PageHeader } from "@/components/AppLayout";
+import { AcessoNegado, PageHeader } from "@/components/AppLayout";
 import { ImportDialog, type ImportConfig } from "@/components/ImportDialog";
 import { FuncionarioReadOnlyFields, FuncionarioSelect } from "@/components/FuncionarioInfo";
 import { useAuth } from "@/hooks/useAuth";
@@ -62,6 +62,16 @@ type Registro = {
 };
 
 function InfoSchoolPage() {
+  const { canEdit } = useAuth();
+  if (!canEdit) {
+    return (
+      <AcessoNegado mensagem="Esta área é restrita a editores e administradores. Seu perfil possui acesso somente aos relatórios." />
+    );
+  }
+  return <InfoSchoolPageConteudo />;
+}
+
+function InfoSchoolPageConteudo() {
   const { canEdit } = useAuth();
   const qc = useQueryClient();
   const { data: funcionarios = [] } = useFuncionarios();
