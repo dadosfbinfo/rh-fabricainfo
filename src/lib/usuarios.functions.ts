@@ -16,6 +16,19 @@ export const excluirUsuario = createServerFn({ method: "POST" })
     if (roleError) throw new Error(roleError.message);
     if (!isAdmin) throw new Error("Apenas administradores podem excluir usuários.");
 
+    const { data: callerIsDev, error: devError } = await context.supabase.rpc("is_dev", {
+      _user_id: context.userId,
+    });
+    if (devError) throw new Error(devError.message);
+
+    const { data: alvoIsDev, error: alvoError } = await context.supabase.rpc("is_dev", {
+      _user_id: data.userId,
+    });
+    if (alvoError) throw new Error(alvoError.message);
+    if (alvoIsDev && !callerIsDev) {
+      throw new Error("Somente ADMINISTRADOR DEV pode excluir um ADMINISTRADOR DEV.");
+    }
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId);
