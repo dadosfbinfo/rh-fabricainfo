@@ -38,6 +38,13 @@ const LABELS: Record<AuxTable, string> = {
   gestores: "Gestores",
 };
 
+const FK_COLUMN: Record<AuxTable, "empresa_id" | "cargo_id" | "projeto_id" | "gestor_id"> = {
+  empresas: "empresa_id",
+  cargos: "cargo_id",
+  projetos: "projeto_id",
+  gestores: "gestor_id",
+};
+
 function AuxCrud({ table }: { table: AuxTable }) {
   const { data = [] } = useAux(table);
   const { canEdit } = useAuth();
@@ -72,12 +79,43 @@ function AuxCrud({ table }: { table: AuxTable }) {
   }
 
   async function remover(id: string) {
+    const coluna = FK_COLUMN[table];
+
+    // Bloqueia apenas se houver funcionários ativos (não excluídos) usando o item
+    const { count, error: countError } = await supabase
+      .from("funcionarios")
+      .select("id", { count: "exact", head: true })
+      .eq(coluna, id)
+      .is("deleted_at", null);
+    if (countError) {
+      toast.error(countError.message);
+      return;
+    }
+    if ((count ?? 0) > 0) {
+      toast.error(
+        `Não foi possível remover: ${count} funcionário(s) ainda utilizam este cadastro.`,
+      );
+      return;
+    }
+
+    // Libera a referência em registros já excluídos (soft delete)
+    const { error: clearError } = await supabase
+      .from("funcionarios")
+      .update({ [coluna]: null })
+      .eq(coluna, id);
+    if (clearError) {
+      toast.error(clearError.message);
+      return;
+    }
+
     const { error } = await supabase.from(table).delete().eq("id", id);
     if (error) {
       toast.error("Não foi possível remover (registro em uso).");
       return;
     }
+    toast.success("Registro removido.");
     void refresh();
+    void qc.invalidateQueries({ queryKey: ["funcionarios"] });
   }
 
   return (
