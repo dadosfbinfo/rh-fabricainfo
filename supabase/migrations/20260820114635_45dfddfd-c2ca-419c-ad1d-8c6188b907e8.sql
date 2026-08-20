@@ -1,0 +1,10 @@
+GRANT EXECUTE ON FUNCTION public.is_dev(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_admin(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.can_edit(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.tem_acesso(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_dev(uuid) TO service_role;
+GRANT EXECUTE ON FUNCTION public.is_admin(uuid) TO service_role;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO service_role;
+GRANT EXECUTE ON FUNCTION public.can_edit(uuid) TO service_role;
+GRANT EXECUTE ON FUNCTION public.tem_acesso(uuid) TO service_role;
