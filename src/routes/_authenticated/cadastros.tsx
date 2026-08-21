@@ -101,7 +101,7 @@ function AuxCrud({ table }: { table: AuxTable }) {
     // Libera a referência em registros já excluídos (soft delete)
     const { error: clearError } = await supabase
       .from("funcionarios")
-      .update({ [coluna]: null })
+      .update({ [coluna]: null } as { empresa_id?: null; cargo_id?: null; projeto_id?: null; gestor_id?: null })
       .eq(coluna, id);
     if (clearError) {
       toast.error(clearError.message);
