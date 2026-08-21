@@ -55,8 +55,9 @@ function AuthPage() {
   async function cadastrar(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
+    const emailNormalizado = email.trim().toLowerCase();
+    const { data, error } = await supabase.auth.signUp({
+      email: emailNormalizado,
       password: senha,
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
@@ -65,12 +66,23 @@ function AuthPage() {
     });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      toast.error(
+        /already|registered|exists/i.test(error.message)
+          ? "Este e-mail já possui cadastro. Faça login ou use outro e-mail."
+          : error.message,
+      );
       return;
     }
-    toast.success("Conta criada. Se a confirmação por e-mail estiver ativa, verifique sua caixa.");
-    void navigate({ to: "/dashboard" });
+    if (data.user && data.user.identities && data.user.identities.length === 0) {
+      toast.error("Este e-mail já possui cadastro. Faça login ou use outro e-mail.");
+      return;
+    }
+    toast.success(
+      "Cadastro criado! Enviamos um e-mail de confirmação — confirme para poder acessar o sistema.",
+    );
+    setSenha("");
   }
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-secondary px-4 py-10">
