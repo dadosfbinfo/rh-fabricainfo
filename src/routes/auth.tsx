@@ -167,9 +167,12 @@ function AuthPage() {
                     Criar conta
                   </Button>
                   <p className="text-xs text-muted-foreground">
-                    O primeiro usuário cadastrado recebe o papel de ADMINISTRADOR. Os demais entram
+                    Cada e-mail só pode ter um cadastro. Após criar a conta, você receberá um
+                    e-mail de confirmação — é preciso confirmar antes do primeiro acesso. O
+                    primeiro usuário cadastrado recebe o papel de ADMINISTRADOR; os demais entram
                     como VISUALIZADOR até que um administrador altere a função.
                   </p>
+
                 </form>
               </TabsContent>
             </Tabs>
