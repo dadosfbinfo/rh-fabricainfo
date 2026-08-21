@@ -55,8 +55,9 @@ function AuthPage() {
   async function cadastrar(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
+    const emailNormalizado = email.trim().toLowerCase();
+    const { data, error } = await supabase.auth.signUp({
+      email: emailNormalizado,
       password: senha,
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
@@ -65,12 +66,23 @@ function AuthPage() {
     });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      toast.error(
+        /already|registered|exists/i.test(error.message)
+          ? "Este e-mail já possui cadastro. Faça login ou use outro e-mail."
+          : error.message,
+      );
       return;
     }
-    toast.success("Conta criada. Se a confirmação por e-mail estiver ativa, verifique sua caixa.");
-    void navigate({ to: "/dashboard" });
+    if (data.user && data.user.identities && data.user.identities.length === 0) {
+      toast.error("Este e-mail já possui cadastro. Faça login ou use outro e-mail.");
+      return;
+    }
+    toast.success(
+      "Cadastro criado! Enviamos um e-mail de confirmação — confirme para poder acessar o sistema.",
+    );
+    setSenha("");
   }
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-secondary px-4 py-10">
@@ -155,9 +167,12 @@ function AuthPage() {
                     Criar conta
                   </Button>
                   <p className="text-xs text-muted-foreground">
-                    O primeiro usuário cadastrado recebe o papel de ADMINISTRADOR. Os demais entram
+                    Cada e-mail só pode ter um cadastro. Após criar a conta, você receberá um
+                    e-mail de confirmação — é preciso confirmar antes do primeiro acesso. O
+                    primeiro usuário cadastrado recebe o papel de ADMINISTRADOR; os demais entram
                     como VISUALIZADOR até que um administrador altere a função.
                   </p>
+
                 </form>
               </TabsContent>
             </Tabs>
